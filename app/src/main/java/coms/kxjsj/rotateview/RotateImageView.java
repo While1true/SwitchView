@@ -27,6 +27,8 @@ public class RotateImageView extends FrameLayout implements Animation.AnimationL
     private Rotation3DAnimation rotation3DAnimation;
     private Rotation3DAnimation rotation3DAnimation2;
     private Runnable action;
+    private int measuredWidth;
+    private int measuredHeight;
 
     public RotateImageView(@NonNull Context context) {
         this(context, null);
@@ -47,14 +49,14 @@ public class RotateImageView extends FrameLayout implements Animation.AnimationL
     }
 
     public void init3DRotate() {
-        rotation3DAnimation = new Rotation3DAnimation(0, -90, 50, 0, getMeasuredHeight() / 2, true);
-        rotation3DAnimation.setDuration(2000);
+        rotation3DAnimation = new Rotation3DAnimation(0, -90, 50, 0, measuredHeight / 2, true);
+        rotation3DAnimation.setDuration(adapter.getSwitchTime());
         rotation3DAnimation.setFillAfter(true);
         rotation3DAnimation.setAnimationListener(this);
 
-        rotation3DAnimation2 = new Rotation3DAnimation(90, 0, 50, getMeasuredWidth(), getMeasuredHeight() / 2, false);
+        rotation3DAnimation2 = new Rotation3DAnimation(90, 0, 50, measuredWidth, measuredHeight / 2, false);
         rotation3DAnimation.setFillAfter(true);
-        rotation3DAnimation2.setDuration(2000);
+        rotation3DAnimation2.setDuration(adapter.getSwitchTime());
     }
 
     private void doLayoutView() {
@@ -74,16 +76,18 @@ public class RotateImageView extends FrameLayout implements Animation.AnimationL
         if (childCount <= 1) {
             return;
         }
-        final View view = attachedView.get(attachedView.size() - 1);
-        final View view2 = attachedView.get(attachedView.size() - 2);
-        action = new Runnable() {
-            @Override
-            public void run() {
-                view.startAnimation(rotation3DAnimation);
-                view2.startAnimation(rotation3DAnimation2);
-            }
-        };
-        view.postDelayed(action,adapter.getSwitchPeriod());
+       if(action==null) {
+           action = new Runnable() {
+               @Override
+               public void run() {
+                   View view = attachedView.get(attachedView.size() - 1);
+                   View view2 = attachedView.get(attachedView.size() - 2);
+                   view.startAnimation(rotation3DAnimation);
+                   view2.startAnimation(rotation3DAnimation2);
+               }
+           };
+       }
+        attachedView.get(attachedView.size() - 1).postDelayed(action,adapter.getSwitchPeriod());
     }
 
     @Override
@@ -123,6 +127,17 @@ public class RotateImageView extends FrameLayout implements Animation.AnimationL
 
     }
 
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        if(measuredWidth==0){
+            measuredWidth=getMeasuredWidth();
+        }
+
+        if(measuredHeight==0){
+            measuredHeight = getMeasuredHeight();
+        }
+    }
 
     /**
      * --------------------------模板代码----------------------------------
@@ -151,10 +166,10 @@ public class RotateImageView extends FrameLayout implements Animation.AnimationL
     private final DataSetObserver observer = new DataSetObserver() {
         @Override
         public void onChanged() {
+            handleViews();
             post(new Runnable() {
                 @Override
                 public void run() {
-                    handleViews();
                     init3DRotate();
                     startAnimator();
                 }
@@ -178,6 +193,7 @@ public class RotateImageView extends FrameLayout implements Animation.AnimationL
         List<T> list;
         int cacheSize = 2;
         long switchPeriod=5000;
+        long switchTime=2000;
 
         public ViewAdapter(List<T> list) {
             this.list = list;
@@ -198,6 +214,14 @@ public class RotateImageView extends FrameLayout implements Animation.AnimationL
 
         public List<T> getList() {
             return list;
+        }
+
+        public long getSwitchTime() {
+            return switchTime;
+        }
+
+        public void setSwitchTime(long switchTime) {
+            this.switchTime = switchTime;
         }
 
         public long getSwitchPeriod() {
