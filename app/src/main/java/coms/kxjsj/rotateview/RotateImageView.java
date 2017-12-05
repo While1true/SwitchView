@@ -1,19 +1,19 @@
 package coms.kxjsj.rotateview;
 
-import android.animation.ValueAnimator;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.DataSetObserver;
-import android.graphics.Camera;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,11 +51,11 @@ public class RotateImageView extends FrameLayout implements Animation.AnimationL
     public void init3DRotate() {
         rotation3DAnimation = new Rotation3DAnimation(0, -90, 50, 0, measuredHeight / 2, true);
         rotation3DAnimation.setDuration(adapter.getSwitchTime());
-        rotation3DAnimation.setFillAfter(true);
+        rotation3DAnimation.setInterpolator(new DecelerateInterpolator(0.9f-0.15f*(getResources().getDisplayMetrics().density*150f)/measuredWidth));
         rotation3DAnimation.setAnimationListener(this);
 
         rotation3DAnimation2 = new Rotation3DAnimation(90, 0, 50, measuredWidth, measuredHeight / 2, false);
-        rotation3DAnimation.setFillAfter(true);
+//        rotation3DAnimation2.setInterpolator(new AccelerateInterpolator(0.1f+0.15f*measuredWidth/(getResources().getDisplayMetrics().density*150f)));
         rotation3DAnimation2.setDuration(adapter.getSwitchTime());
     }
 
@@ -113,11 +113,12 @@ public class RotateImageView extends FrameLayout implements Animation.AnimationL
 
     @Override
     public void onAnimationStart(Animation animation) {
-
+        setLayerType(LAYER_TYPE_HARDWARE,null);
     }
 
     @Override
     public void onAnimationEnd(Animation animation) {
+        setLayerType(LAYER_TYPE_NONE,null);
         doLayoutView();
         startAnimator();
     }
@@ -193,7 +194,7 @@ public class RotateImageView extends FrameLayout implements Animation.AnimationL
         List<T> list;
         int cacheSize = 2;
         long switchPeriod=5000;
-        long switchTime=2000;
+        long switchTime=1500;
 
         public ViewAdapter(List<T> list) {
             this.list = list;

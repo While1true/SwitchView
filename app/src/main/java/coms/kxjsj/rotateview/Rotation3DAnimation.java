@@ -37,7 +37,7 @@ public class Rotation3DAnimation extends Animation {
         float currentDegree=startDegree+(endDegree-startDegree)*interpolatedTime;
         Matrix matrix = t.getMatrix();
         camera.save();
-//        camera.translate(0,0,deep* (1-interpolatedTime));
+//        camera.translate(0,0,deep);
         camera.rotateY(currentDegree);
         camera.getMatrix(matrix);
         matrix.postScale(!reverse?interpolatedTime:(1-interpolatedTime),!reverse?interpolatedTime:(1-interpolatedTime));
