@@ -10,14 +10,24 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
+
+    private AdImageView adImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         RotateImageView vvv=findViewById(R.id.vvv);
+        adImageView = findViewById(R.id.vv);
+        findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                adImageView.setDy(adImageView.getMdy()+3+adImageView.getMeasuredHeight());
+            }
+        });
         List<String> list=new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             list.add("这是第"+(i)+"个");

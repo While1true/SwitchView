@@ -113,12 +113,12 @@ public class RotateImageView extends FrameLayout implements Animation.AnimationL
 
     @Override
     public void onAnimationStart(Animation animation) {
-        setLayerType(LAYER_TYPE_HARDWARE,null);
+//        setLayerType(LAYER_TYPE_HARDWARE,null);
     }
 
     @Override
     public void onAnimationEnd(Animation animation) {
-        setLayerType(LAYER_TYPE_NONE,null);
+//        setLayerType(LAYER_TYPE_NONE,null);
         doLayoutView();
         startAnimator();
     }
